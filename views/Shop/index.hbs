@@ -1,3 +1,11 @@
+<div class="row">
+  <div class="col-sm-6 col-md-4 col-sm-offset-3 col-md-offset-4">
+    <div class="alert alert-success" id="success" {{#if noMessage}} hidden {{/if}}>
+        {{successMsg}}
+    </div>
+  </div>
+</div>
+
 {{#each this.products}}
 <div class="row">
   {{#each this}}
@@ -9,7 +17,7 @@
         <p class="description">{{this.description}}</p>
         <div class="clearfix">
           <div class="price pull-left">${{this.price}}</div>
-          <a href="#" class="btn btn-primary pull-right" role="button">Button</a>
+          <a href="/add-to-cart/{{this._id}}" class="btn btn-primary pull-right" role="button">Add to Cart</a>
         </div>
       </div>
     </div>

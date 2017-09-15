@@ -7,11 +7,16 @@ var passport = require('passport');
 var csrfProtection = csrf();
 router.use(csrfProtection);
 
-
+//Profile
 router.get('/profile',isLoggedIn,function(req,res,next){
   res.render('user/profile');
 });
 
+//Logout
+router.get('/logout',function(req,res,next){
+  req.logout();
+  res.redirect('/');
+});
 
 router.use('/',notLoggedIn,function(req,res,next){
   next();
@@ -45,10 +50,7 @@ router.post('/Signup',passport.authenticate('local.signup',{
 }));
 //SignUp Ends
 
-router.get('/logout',function(req,res,next){
-  req.logout();
-  res.redirect('/');
-});
+
 
 
 module.exports = router;

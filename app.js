@@ -11,6 +11,7 @@ var session = require('express-session');
 var passport =require('passport'); //User management Signup/In
 var flash = require('connect-flash');
 var validator = require('express-validator');
+var MongoStore = require('connect-mongo')(session);//Used for saving cart details in Session, workes with Mongoose and express-session
 var userRoutes = require('./routes/user');
 var app = express();
 
@@ -27,15 +28,25 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(validator());//Validator parses the body in the request so only after the Body
 app.use(cookieParser());
-app.use(session({secret:'mysupersecret',resave:true,saveUninitialized:false}));
+app.use(session({
+  secret:'mysupersecret',
+  resave:true,
+  saveUninitialized:false,
+  store: new MongoStore({mongooseConnection: mongoose.connection}),//Making use of Mongodb Connection and making sure no new connecion is created, we want to make sure already extablised connection is put to use.
+  cookie: {maxAge : 180 * 60 * 1000} //how long the session should live before it expired
+}
+));
 app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.static(path.join(__dirname, 'public')));
 
 
-app.use(function(res,req,next){
+app.use(function(req,res,next){
   res.locals.login = req.isAuthenticated();
+
+  res.locals.session = req.session;//Middleware to make sure i have access to session object in my Views also.
+  next();
 });
 app.use('/user', userRoutes);
 app.use('/', routes);
